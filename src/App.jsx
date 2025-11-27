@@ -500,7 +500,7 @@ useEffect(() => {
   const handleDelete = async (id) => {
     if (!user || !window.confirm('Are you sure you want to remove this subscription?')) return;
     try {
-      await deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'subscriptions', id));
+      await deleteDoc(doc(db, 'users', user.uid, 'subscriptions', id));
     } catch (err) {
       console.error("Error deleting:", err);
     }
