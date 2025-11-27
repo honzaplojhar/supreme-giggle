@@ -500,9 +500,11 @@ useEffect(() => {
   const handleDelete = async (id) => {
     if (!user || !window.confirm('Are you sure you want to remove this subscription?')) return;
     try {
+      // CORRECT PATH (No 'artifacts', No 'appId'):
       await deleteDoc(doc(db, 'users', user.uid, 'subscriptions', id));
     } catch (err) {
       console.error("Error deleting:", err);
+      alert("Error deleting: " + err.message);
     }
   };
 
