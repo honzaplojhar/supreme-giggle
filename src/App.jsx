@@ -7,25 +7,6 @@ import {
   onAuthStateChanged 
 } from 'firebase/auth';
 
-// Inside your App component:
-useEffect(() => {
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
-  
-  // Simple login flow
-  const initAuth = async () => {
-     onAuthStateChanged(auth, (u) => {
-        if (u) {
-           setUser(u);
-        } else {
-           // Prompt login if not signed in
-           signInWithPopup(auth, provider); 
-        }
-     });
-  };
-  initAuth();
-}, []);
-
 import { 
   getFirestore, 
   collection, 
@@ -290,7 +271,7 @@ export default function App() {
   });
 
   // --- Auth & Data Fetching ---
-  useEffect(() => {
+/*   useEffect(() => {
     // PREVIEW ENVIRONMENT AUTH:
     // This is required for the preview to work. When deploying to production, 
     // you can swap this for Google Auth (signInWithPopup) as shown in the deployment guide.
@@ -308,7 +289,47 @@ export default function App() {
       if (!u) setLoading(false);
     });
     return () => unsubscribe();
-  }, []);
+  }, []); */
+
+// Inside your App component:
+useEffect(() => {
+    // Listen for auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u); // Set the user
+      
+      if (u) {
+        // 1. User is logged in: Start fetching subscriptions
+        const q = query(
+          // MAKE SURE THIS PATH IS CORRECT (No appId!):
+          collection(db, 'users', u.uid, 'subscriptions'),
+          orderBy('createdAt', 'desc')
+        );
+
+        const unsubDocs = onSnapshot(q, 
+          (snapshot) => {
+            const subs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setSubscriptions(subs);
+            setLoading(false);
+          },
+          (error) => {
+            console.error("Error fetching subs:", error);
+            setLoading(false);
+          }
+        );
+        return () => unsubDocs();
+      } else {
+        // 2. User is NOT logged in: Prompt Google Login
+        setSubscriptions([]);
+        setLoading(false);
+        const provider = new GoogleAuthProvider();
+        signInWithPopup(auth, provider).catch((error) => {
+           console.error("Login failed:", error);
+        });
+      }
+    });
+
+    return () => unsubscribe();
+  }, []); // End of useEffect
 
   useEffect(() => {
     if (!user) return;
