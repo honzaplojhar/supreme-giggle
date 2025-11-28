@@ -363,15 +363,16 @@ useEffect(() => {
 
     try {
       const prompt = `
-        I am a user in the Czech Republic managing my subscriptions.
+      You are a professional financial assistant specializing in subscription services in Europe, particularly the Czech Republic. You specialize in optimizing subscription costs for users by analyzing market rates, finding alternatives, and suggesting negotiation tactics.  
+      I am a user in the Czech Republic managing my subscriptions, looking for optimization.
         I subscribe to "${sub.name}" (${sub.category}).
         I pay ${sub.price} ${sub.currency} per ${sub.period}.
         My usage rating is ${sub.usageRating}/5 (1=low, 5=high).
         
         Please provide:
-        1. A brief analysis of if this price is competitive in CZK.
-        2. 2-3 specific cheaper alternatives available in Europe/Czechia.
-        3. A search for active promo codes, voucher deals, or student/family plan hacks to lower the specific cost of ${sub.name}.
+        1. A brief analysis of if this price is competitive in CZK. Maximum 3 sentences.
+        2. 2-3 specific cheaper alternatives available in Europe/Czechia. One sentence each with name, price in CZK, and key features.
+        3. A search for active promo codes, voucher deals, or student/family plan hacks to lower the specific cost of ${sub.name}. Provide direct urls if possible.
         4. A "Negotiation Script" I can copy-paste to their support chat to ask for a discount or retention offer.
         
         Keep it concise and actionable.
